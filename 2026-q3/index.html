@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Q3 Master Schedule: The Road to 9.8s</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;500;700&display=swap');
+
+    :root {
+      --bg-dark: #0a0a0e;
+      --bg-panel: rgba(20, 20, 28, 0.7);
+      --bg-card: rgba(30, 30, 42, 0.8);
+      
+      --accent-primary: #00f0ff;
+      --accent-secondary: #ff003c;
+      --accent-tertiary: #8a2be2;
+      --accent-success: #39ff14;
+      
+      --text-main: #f0f0f5;
+      --text-muted: #a0a0b0;
+      
+      --border-light: rgba(255, 255, 255, 0.1);
+      --glass-blur: blur(16px);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(circle at 15% 50%, rgba(0, 240, 255, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 85% 30%, rgba(255, 0, 60, 0.05) 0%, transparent 50%);
+      color: var(--text-main);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    header {
+      padding: 3rem 2rem 1rem;
+      text-align: center;
+      background: linear-gradient(180deg, rgba(10,10,14,0.9) 0%, transparent 100%);
+    }
+
+    h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 3.5rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: -0.02em;
+      background: linear-gradient(90deg, var(--accent-primary), #fff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      font-weight: 400;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .tab-container {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin: 1.5rem auto 2.5rem;
+      max-width: 900px;
+      padding: 0 1rem;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-light);
+      color: var(--text-muted);
+      padding: 0.8rem 1.5rem;
+      border-radius: 30px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      backdrop-filter: var(--glass-blur);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .tab-btn:hover {
+      color: var(--text-main);
+      border-color: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .tab-btn.active {
+      background: rgba(0, 240, 255, 0.1);
+      color: var(--accent-primary);
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+    }
+
+    .section-content {
+      display: none;
+      max-width: 1250px;
+      margin: 0 auto 4rem;
+      padding: 0 2rem;
+      animation: fadeIn 0.4s ease-out forwards;
+    }
+
+    .section-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      backdrop-filter: var(--glass-blur);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 4px;
+      background: linear-gradient(90deg, var(--accent-primary), var(--accent-tertiary));
+      opacity: 0.5;
+    }
+
+    .card.red-glow::before { background: linear-gradient(90deg, var(--accent-secondary), #ff5e00); }
+    .card.green-glow::before { background: linear-gradient(90deg, var(--accent-success), #00ff88); }
+    .card.gold-glow::before { background: linear-gradient(90deg, #ffd700, #ff8c00); }
+
+    .card-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .pill-blue { background: rgba(0, 240, 255, 0.15); color: #00f0ff; border: 1px solid rgba(0, 240, 255, 0.3); }
+    .pill-red { background: rgba(255, 0, 60, 0.15); color: #ff003c; border: 1px solid rgba(255, 0, 60, 0.3); }
+    .pill-green { background: rgba(57, 255, 20, 0.15); color: #39ff14; border: 1px solid rgba(57, 255, 20, 0.3); }
+    .pill-gold { background: rgba(255, 215, 0, 0.15); color: #ffd700; border: 1px solid rgba(255, 215, 0, 0.3); }
+
+    .tbl-wrap {
+      overflow-x: auto;
+      border-radius: 12px;
+      border: 1px solid var(--border-light);
+      background: rgba(10, 10, 14, 0.5);
+      margin-top: 1.5rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    th {
+      background: rgba(255, 255, 255, 0.03);
+      padding: 0.8rem;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    td {
+      padding: 0.8rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 0.9rem;
+    }
+
+    tr:last-child td { border-bottom: none; }
+    
+    .tbl-total td {
+      background: rgba(0, 240, 255, 0.05);
+      font-weight: 700;
+      color: var(--accent-primary);
+    }
+    
+    .rda-row td {
+      background: rgba(255, 255, 255, 0.05);
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .red-text { color: #ff4a4a; font-weight: bold; }
+    .green-text { color: #39ff14; font-weight: bold; }
+
+    .step-list {
+      list-style: none;
+      margin-top: 1.5rem;
+    }
+    .step-list li {
+      display: flex;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+      background: rgba(255, 255, 255, 0.02);
+      padding: 1.5rem;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .step-icon { font-size: 1.8rem; opacity: 0.8; }
+    .step-content h4 { font-family: 'Outfit', sans-serif; font-size: 1.2rem; color: #fff; margin-bottom: 0.4rem; }
+    .step-content p { color: var(--text-muted); font-size: 0.95rem; }
+
+    /* Custom Data Grid for Shopping List */
+    .data-grid {
+      display: grid;
+      grid-template-columns: minmax(200px, 2fr) 1fr 1fr 1fr;
+      gap: 1px;
+      background: var(--border-light);
+      border: 1px solid var(--border-light);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-top: 1.5rem;
+    }
+    .grid-header {
+      background: rgba(255,255,255,0.05);
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+      padding: 1rem;
+    }
+    .grid-cell {
+      background: rgba(10,10,14,0.8);
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      font-size: 0.95rem;
+    }
+    .grid-cell.highlight {
+      color: var(--accent-primary);
+      font-weight: 600;
+    }
+    .grid-total-row {
+      grid-column: 1 / -1;
+      background: rgba(0, 240, 255, 0.1);
+      padding: 1.5rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    @media (max-width: 768px) {
+      .data-grid {
+        grid-template-columns: 1fr;
+      }
+      .grid-header { display: none; }
+      .grid-cell { background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border-light); }
+    }
+
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Q3 Master Schedule</h1>
+    <div class="subtitle">The Charlie Francis High/Low Protocol</div>
+  </header>
+
+  <div class="tab-container">
+    <button class="tab-btn active" onclick="openTab(event, 'Overview')">Roadmap</button>
+    <button class="tab-btn" onclick="openTab(event, 'Workouts')">Workouts</button>
+    <button class="tab-btn" onclick="openTab(event, 'Nutrition')">Nutrition</button>
+    <button class="tab-btn" onclick="openTab(event, 'Shopping')">Shopping List</button>
+    <button class="tab-btn" onclick="openTab(event, 'Forfeit')">Forfeit Tasks</button>
+  </div>
+
+  <!-- OVERVIEW TAB -->
+  <section id="Overview" class="section-content active">
+    <div class="card">
+      <div class="card-title">🎯 The 160 lbs @ 9% Morphology</div>
+      <p style="color: var(--text-muted); margin-bottom: 1.5rem;">To hit your ultimate 9.8s goal, you need ~145.6 lbs of Lean Mass. Based on your DEXA scan, you need exactly 30 lbs of pure muscle distributed into the posterior chain and trunk.</p>
+      
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Region</th><th>Current DEXA</th><th>Sprinter Target</th><th>Muscle to Gain</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Legs</strong></td><td>45.2 lbs</td><td>~62.0 lbs</td><td><span class="pill pill-green">+16.8 lbs</span></td></tr>
+            <tr><td><strong>Trunk</strong></td><td>47.2 lbs</td><td>~55.0 lbs</td><td><span class="pill pill-green">+7.8 lbs</span></td></tr>
+            <tr><td><strong>Arms</strong></td><td>15.3 lbs</td><td>~18.0 lbs</td><td><span class="pill pill-blue">+2.7 lbs</span></td></tr>
+            <tr><td><strong>Bone/Fluids</strong></td><td>~7.9 lbs</td><td>~10.6 lbs</td><td><span class="pill pill-blue">+2.7 lbs</span> <span style="font-size:0.8rem; color:var(--text-muted);">(Wolff's Law bone density & plasma)</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORKOUTS TAB -->
+  <section id="Workouts" class="section-content">
+    <div class="card red-glow">
+      <div class="card-title">🔥 HIGH DAYS (Mon / Wed / Fri)</div>
+      <p style="color: var(--text-muted); margin-bottom: 2rem;">Massive CNS output. Sprints + Gym on the same day. Do not skip.</p>
+
+      <h3 style="color:#fff; font-family:'Outfit'; font-size:1.4rem;">Monday: Max Velocity & Leg Mass</h3>
+      <ul class="step-list">
+        <li>
+          <div class="step-icon">🏃‍♂️</div>
+          <div class="step-content">
+            <h4>Track: T-Apex Assisted Overspeed (45m)</h4>
+            <p><strong>Warm-Up:</strong> 5-6 min aerobic jog + dynamics + 3x30m Potentiation build-ups.<br>
+            <strong>Workout:</strong> T-Apex assisted runs (running toward unit). Teach the brain to remove velocity inhibition.</p>
+          </div>
+        </li>
+        <li>
+          <div class="step-icon">🏋️‍♂️</div>
+          <div class="step-content">
+            <h4>Gym: Leg Hypertrophy (60m)</h4>
+            <p>Back Squats (4x8), Romanian Deadlifts (4x8), Bulgarian Split Squats (3x10/leg), Leg Curls (3x12), Calf Raises (4x15).</p>
+          </div>
+        </li>
+      </ul>
+
+      <h3 style="color:#fff; font-family:'Outfit'; font-size:1.4rem; margin-top:3rem;">Wednesday: Acceleration & Power</h3>
+      <ul class="step-list">
+        <li>
+          <div class="step-icon">💨</div>
+          <div class="step-content">
+            <h4>Field & Garage: T-Apex Explosive Mechanics (45m)</h4>
+            <p><strong>Field:</strong> T-Apex Resisted Sprints (running away).<br>
+            <strong>Garage:</strong> T-Apex Single-Leg Jump Squats (3x5/leg) + T-Apex Explosive Alternating Chest Press (3x8/arm) + T-Apex Resisted Knee Drives (3x8/leg).</p>
+          </div>
+        </li>
+        <li>
+          <div class="step-content">
+            <h4>Gym: Trunk & Arm Hypertrophy (60m)</h4>
+            <p>Weighted Pull-ups (4x8), Seated DB Shoulder Press (4x8), Incline DB Press (3x10), DB Rows (3x10), Bicep/Tricep supersets (3x12).</p>
+          </div>
+        </li>
+      </ul>
+
+      <h3 style="color:#fff; font-family:'Outfit'; font-size:1.4rem; margin-top:3rem;">Friday: Translation & Raw Strength</h3>
+      <ul class="step-list">
+        <li>
+          <div class="step-icon">🏁</div>
+          <div class="step-content">
+            <h4>Track: Unassisted Free Sprints (45m)</h4>
+            <p>No T-Apex. Translate your overspeed and acceleration gains into natural free sprinting mechanics.</p>
+          </div>
+        </li>
+        <li>
+          <div class="step-icon">🏗️</div>
+          <div class="step-content">
+            <h4>Gym: Force Production (45m)</h4>
+            <p>Trap Bar Deadlift (3x4), Front Squats (3x5), Weighted Dips (3x6), Weighted Chin-ups (3x6). Low reps, pure strength.</p>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card green-glow">
+      <div class="card-title">🌿 LOW DAYS (Tue / Thu / Sat / Sun)</div>
+      <p style="color: var(--text-muted);"><strong>Complete Rest.</strong> Your muscles grow while you rest. The CNS needs 48 hours to clear the fatigue from your High Days. Light walking, stretching, or massage only. Zero heavy lifting.</p>
+    </div>
+  </section>
+
+  <!-- NUTRITION TAB -->
+  <section id="Nutrition" class="section-content">
+    
+    <div class="card red-glow">
+      <div class="card-title">
+        🥩 HIGH DAY FUEL (Mon / Wed / Fri) 
+        <span class="pill pill-red" style="margin-left:auto;">~3,525 KCAL</span>
+      </div>
+      <p style="color:var(--text-muted);">You burn ~1,350 kcal exercising. Eat aggressively to drive muscle growth. Bone Suckin' Sauce controlled at 60g total for the day to keep calories in the ~3,500 pocket.</p>
+      
+      <div class="tbl-wrap" style="min-width: 100%;">
+        <table style="min-width: 1000px;">
+          <thead>
+            <tr>
+              <th>Meal</th>
+              <th>Ingredient</th>
+              <th>Cal</th>
+              <th>Pro</th>
+              <th>Fat</th>
+              <th>Carb</th>
+              <th>Fib</th>
+              <th>Vit A</th>
+              <th>Vit C</th>
+              <th>Vit K</th>
+              <th>Calc</th>
+              <th>Iron</th>
+              <th>Mag</th>
+              <th>Potas</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td rowspan="5"><strong>Burritos (x2)</strong></td>
+              <td>Flour Tortilla (2 large)</td><td>280</td><td>16</td><td>8</td><td>34</td><td>2</td><td>0</td><td>0</td><td>0</td><td>80</td><td>2.4</td><td>20</td><td>100</td>
+            </tr>
+            <tr>
+              <td>Buckingham Ground Beef (200g)</td><td>440</td><td>51</td><td>13.4</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>24</td><td>4.4</td><td>42</td><td>636</td>
+            </tr>
+            <tr>
+              <td>Cottage Cheese (125g total)</td><td>90</td><td>15</td><td>0.4</td><td>7</td><td>0</td><td>136</td><td>0</td><td>0</td><td>103</td><td>0.1</td><td>10</td><td>106</td>
+            </tr>
+            <tr>
+              <td>Black Beans (50g Canned)</td><td>45</td><td>3</td><td>0.2</td><td>8</td><td>3.5</td><td>0</td><td>0</td><td>0</td><td>25</td><td>0.8</td><td>20</td><td>166</td>
+            </tr>
+            <tr>
+              <td>Bone Suckin' Sauce (30g)</td><td>40</td><td>0</td><td>0</td><td>10</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td>
+            </tr>
+            <tr>
+              <td rowspan="8"><strong>Smoothie</strong></td>
+              <td>ON Gold Whey (1 scoop)</td><td>120</td><td>24</td><td>1.5</td><td>3</td><td>0</td><td>0</td><td>0</td><td>0</td><td>100</td><td>0</td><td>20</td><td>150</td>
+            </tr>
+            <tr>
+              <td>1% Milk (150ml)</td><td>66</td><td>5.4</td><td>1.5</td><td>7.2</td><td>0</td><td>90</td><td>0</td><td>0</td><td>210</td><td>0</td><td>24</td><td>240</td>
+            </tr>
+            <tr>
+              <td>Frozen Banana (100g)</td><td>89</td><td>1.1</td><td>0.3</td><td>22.8</td><td>2.6</td><td>64</td><td>8.7</td><td>0.5</td><td>5</td><td>0.3</td><td>27</td><td>358</td>
+            </tr>
+            <tr>
+              <td>Frozen Blueberries (100g)</td><td>57</td><td>0.7</td><td>0.3</td><td>14.5</td><td>2.4</td><td>54</td><td>9.7</td><td>19.3</td><td>6</td><td>0.3</td><td>6</td><td>77</td>
+            </tr>
+            <tr>
+              <td>Frozen Spinach (85g)</td><td>25</td><td>3</td><td>0</td><td>3</td><td>2</td><td>2000</td><td>2</td><td>200</td><td>100</td><td>1.5</td><td>30</td><td>300</td>
+            </tr>
+            <tr>
+              <td>Ground Flaxseed (40g)</td><td>213</td><td>7.3</td><td>16.9</td><td>11.5</td><td>10.9</td><td>0</td><td>0</td><td>0</td><td>102</td><td>2.2</td><td>156</td><td>325</td>
+            </tr>
+            <tr>
+              <td>Beet Powder (1 tbsp / 10g)</td><td>35</td><td>1</td><td>0</td><td>8</td><td>1</td><td>0</td><td>0</td><td>0</td><td>10</td><td>0.5</td><td>10</td><td>150</td>
+            </tr>
+            <tr>
+              <td>Kiwis (2)</td><td>85</td><td>1.6</td><td>0.7</td><td>20.5</td><td>4.2</td><td>122</td><td>130</td><td>56</td><td>48</td><td>0.4</td><td>24</td><td>436</td>
+            </tr>
+            <tr>
+              <td rowspan="5"><strong>Pasta</strong></td>
+              <td>Penne (250g)</td><td>912</td><td>30</td><td>5</td><td>190</td><td>8</td><td>0</td><td>0</td><td>0</td><td>52</td><td>3.2</td><td>132</td><td>557</td>
+            </tr>
+            <tr>
+              <td>Buckingham Ground Beef (300g)</td><td>660</td><td>76</td><td>20.1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>36</td><td>6.6</td><td>63</td><td>954</td>
+            </tr>
+            <tr>
+              <td>Cottage Cheese (125g)</td><td>90</td><td>15</td><td>0.4</td><td>7</td><td>0</td><td>136</td><td>0</td><td>0</td><td>103</td><td>0.1</td><td>10</td><td>106</td>
+            </tr>
+            <tr>
+              <td>Bone Suckin' Sauce (30g)</td><td>40</td><td>0</td><td>0</td><td>10</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td>
+            </tr>
+            <tr>
+              <td>Olive Oil (2 tbsp)</td><td>240</td><td>0</td><td>28</td><td>0</td><td>0</td><td>0</td><td>0</td><td>24</td><td>0</td><td>0</td><td>0</td><td>0</td>
+            </tr>
+            <tr class="tbl-total">
+              <td colspan="2"><strong>DAILY TOTAL</strong></td>
+              <td><strong>3,527</strong></td>
+              <td><strong>250g</strong></td>
+              <td><strong>96g</strong></td>
+              <td><strong>356g</strong></td>
+              <td><span class="green-text">36.6g</span></td>
+              <td><span class="green-text">2602</span></td>
+              <td><span class="green-text">150</span></td>
+              <td><span class="green-text">299.8</span></td>
+              <td><span class="green-text">1004</span></td>
+              <td><span class="green-text">22.8</span></td>
+              <td><span class="green-text">594</span></td>
+              <td><span class="green-text">4661</span></td>
+            </tr>
+            <tr class="rda-row">
+              <td colspan="6"><strong>DAILY RDA TARGET</strong></td>
+              <td><strong>38g</strong></td>
+              <td><strong>3000 IU</strong></td>
+              <td><strong>90mg</strong></td>
+              <td><strong>120mcg</strong></td>
+              <td><strong>1000mg</strong></td>
+              <td><strong>8mg</strong></td>
+              <td><strong>420mg</strong></td>
+              <td><strong>3400mg</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card green-glow">
+      <div class="card-title">
+        🍣 LOW DAY FUEL (Tue / Thu / Sat / Sun) 
+        <span class="pill pill-green" style="margin-left:auto;">~2,187 KCAL</span>
+      </div>
+      <p style="color:var(--text-muted);">Exact match to your 8-slice Costco Salmon pack! Each meal uses 1 full slice (170g raw weight). Sockeye salmon is incredibly lean, meaning lower calories but extremely high quality protein.</p>
+      
+      <div class="tbl-wrap" style="min-width: 100%;">
+        <table style="min-width: 1000px;">
+          <thead>
+            <tr>
+              <th>Meal</th>
+              <th>Ingredient</th>
+              <th>Cal</th>
+              <th>Pro</th>
+              <th>Fat</th>
+              <th>Carb</th>
+              <th>Fib</th>
+              <th>Vit A</th>
+              <th>Vit C</th>
+              <th>Vit K</th>
+              <th>Calc</th>
+              <th>Iron</th>
+              <th>Mag</th>
+              <th>Potas</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td rowspan="7"><strong>Smoothie</strong></td>
+              <td>ON Gold Whey (1 scoop)</td><td>120</td><td>24</td><td>1.5</td><td>3</td><td>0</td><td>0</td><td>0</td><td>0</td><td>100</td><td>0</td><td>20</td><td>150</td>
+            </tr>
+            <tr>
+              <td>1% Milk (250ml)</td><td>110</td><td>9</td><td>2.5</td><td>12</td><td>0</td><td>150</td><td>0</td><td>0</td><td>350</td><td>0</td><td>40</td><td>400</td>
+            </tr>
+            <tr>
+              <td>Frozen Banana (100g)</td><td>89</td><td>1.1</td><td>0.3</td><td>22.8</td><td>2.6</td><td>64</td><td>8.7</td><td>0.5</td><td>5</td><td>0.3</td><td>27</td><td>358</td>
+            </tr>
+            <tr>
+              <td>Frozen Spinach (85g)</td><td>25</td><td>3</td><td>0</td><td>3</td><td>2</td><td>2000</td><td>2</td><td>200</td><td>100</td><td>1.5</td><td>30</td><td>300</td>
+            </tr>
+            <tr>
+              <td>Ground Flaxseed (40g)</td><td>213</td><td>7.3</td><td>16.9</td><td>11.5</td><td>10.9</td><td>0</td><td>0</td><td>0</td><td>102</td><td>2.2</td><td>156</td><td>325</td>
+            </tr>
+            <tr>
+              <td>Beet Powder (1 tbsp / 10g)</td><td>35</td><td>1</td><td>0</td><td>8</td><td>1</td><td>0</td><td>0</td><td>0</td><td>10</td><td>0.5</td><td>10</td><td>150</td>
+            </tr>
+            <tr>
+              <td>Kiwis (2)</td><td>85</td><td>1.6</td><td>0.7</td><td>20.5</td><td>4.2</td><td>122</td><td>130</td><td>56</td><td>48</td><td>0.4</td><td>24</td><td>436</td>
+            </tr>
+            <tr>
+              <td rowspan="4"><strong>Lunch (Salmon)</strong></td>
+              <td><span class="green-text">Costco Salmon (170g / 1 slice)</span></td><td>218</td><td>38</td><td>8.2</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>14</td><td>0.7</td><td>40</td><td>612</td>
+            </tr>
+            <tr>
+              <td>White Rice (200g)</td><td>260</td><td>5.4</td><td>0.6</td><td>56</td><td>0.8</td><td>0</td><td>0</td><td>0</td><td>20</td><td>2.4</td><td>24</td><td>70</td>
+            </tr>
+            <tr>
+              <td>Bone Suckin' Teriyaki (30g)</td><td>45</td><td>0</td><td>0</td><td>10</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td>
+            </tr>
+            <tr>
+              <td>Avocado (1/2)</td><td>160</td><td>2</td><td>15</td><td>9</td><td>7</td><td>146</td><td>10</td><td>21</td><td>12</td><td>0.5</td><td>29</td><td>485</td>
+            </tr>
+            <tr>
+              <td rowspan="5"><strong>Dinner (Salmon)</strong></td>
+              <td><span class="green-text">Costco Salmon (170g / 1 slice)</span></td><td>218</td><td>38</td><td>8.2</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>14</td><td>0.7</td><td>40</td><td>612</td>
+            </tr>
+            <tr>
+              <td>White Rice (200g)</td><td>260</td><td>5.4</td><td>0.6</td><td>56</td><td>0.8</td><td>0</td><td>0</td><td>0</td><td>20</td><td>2.4</td><td>24</td><td>70</td>
+            </tr>
+            <tr>
+              <td>Bone Suckin' Teriyaki (30g)</td><td>45</td><td>0</td><td>0</td><td>10</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td>
+            </tr>
+            <tr>
+              <td>Avocado (1/2)</td><td>160</td><td>2</td><td>15</td><td>9</td><td>7</td><td>146</td><td>10</td><td>21</td><td>12</td><td>0.5</td><td>29</td><td>485</td>
+            </tr>
+            <tr>
+              <td>Cottage Cheese (200g)</td><td>144</td><td>24</td><td>0.6</td><td>11.2</td><td>0</td><td>217</td><td>0</td><td>0</td><td>164</td><td>0.2</td><td>16</td><td>170</td>
+            </tr>
+            <tr class="tbl-total">
+              <td colspan="2"><strong>DAILY TOTAL</strong></td>
+              <td><strong>2,187</strong></td>
+              <td><strong>161g</strong></td>
+              <td><strong>69g</strong></td>
+              <td><strong>242g</strong></td>
+              <td><span class="green-text">36.3g</span></td>
+              <td><span class="green-text">2845</span></td>
+              <td><span class="green-text">160</span></td>
+              <td><span class="green-text">298.5</span></td>
+              <td><span class="green-text">973</span></td>
+              <td><span class="green-text">12.3</span></td>
+              <td><span class="green-text">509</span></td>
+              <td><span class="green-text">4623</span></td>
+            </tr>
+            <tr class="rda-row">
+              <td colspan="6"><strong>DAILY RDA TARGET</strong></td>
+              <td><strong>38g</strong></td>
+              <td><strong>3000 IU</strong></td>
+              <td><strong>90mg</strong></td>
+              <td><strong>120mcg</strong></td>
+              <td><strong>1000mg</strong></td>
+              <td><strong>8mg</strong></td>
+              <td><strong>420mg</strong></td>
+              <td><strong>3400mg</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- SHOPPING TAB -->
+  <section id="Shopping" class="section-content">
+    <div class="card gold-glow">
+      <div class="card-title">🛒 Weekly Grocery Hitlist (Real Prices)</div>
+      <p style="color:var(--text-muted); margin-bottom: 2rem;">Exact pricing mapped for 7 days of the Q3 Protocol. Bulk/long-term items are amortized strictly for the week's usage.</p>
+
+      <div class="data-grid">
+        <div class="grid-header">Item & Size</div>
+        <div class="grid-header">Unit Price</div>
+        <div class="grid-header">Weekly Qty Used</div>
+        <div class="grid-header">Weekly Amortized Cost</div>
+
+        <!-- Proteon & Dairy -->
+        <div class="grid-cell"><span class="green-text">Buckingham Ground Beef</span></div>
+        <div class="grid-cell">$25.00 / kg</div>
+        <div class="grid-cell">1.5 kg</div>
+        <div class="grid-cell highlight">$37.50</div>
+
+        <div class="grid-cell"><span class="green-text">Costco Sockeye Salmon (8 Slices)</span></div>
+        <div class="grid-cell">$64.02 / 1.36kg</div>
+        <div class="grid-cell">1 Pack (1.36 kg)</div>
+        <div class="grid-cell highlight">$64.02</div>
+
+        <div class="grid-cell">Cottage Cheese (500g tub)</div>
+        <div class="grid-cell">$5.49</div>
+        <div class="grid-cell">1.55 kg (~3.1 tubs)</div>
+        <div class="grid-cell highlight">$17.01</div>
+
+        <div class="grid-cell">ON Gold Standard Whey (73 servings)</div>
+        <div class="grid-cell">$146.89</div>
+        <div class="grid-cell">7 scoops</div>
+        <div class="grid-cell highlight">$14.08</div>
+
+        <div class="grid-cell">Neilson 1% Milk (4L)</div>
+        <div class="grid-cell">$6.44</div>
+        <div class="grid-cell">1.45 L</div>
+        <div class="grid-cell highlight">$2.33</div>
+
+        <!-- Sauces & Carbs -->
+        <div class="grid-cell">Bone Suckin' Sauce (510g)</div>
+        <div class="grid-cell">$8.49</div>
+        <div class="grid-cell">180g (0.35 bottles)</div>
+        <div class="grid-cell highlight">$3.00</div>
+
+        <div class="grid-cell">Bone Suckin' Teriyaki (375g)</div>
+        <div class="grid-cell">$8.79</div>
+        <div class="grid-cell">240g (0.64 bottles)</div>
+        <div class="grid-cell highlight">$5.63</div>
+
+        <div class="grid-cell">Flour Tortillas (6 pack)</div>
+        <div class="grid-cell">$4.19</div>
+        <div class="grid-cell">6 tortillas</div>
+        <div class="grid-cell highlight">$4.19</div>
+
+        <div class="grid-cell">Penne Pasta (900g bag)</div>
+        <div class="grid-cell">$2.00</div>
+        <div class="grid-cell">750g</div>
+        <div class="grid-cell highlight">$1.66</div>
+
+        <div class="grid-cell">White Rice (Dry)</div>
+        <div class="grid-cell">~$3.00 / 800g</div>
+        <div class="grid-cell">800g</div>
+        <div class="grid-cell highlight">$3.00</div>
+
+        <!-- Produce & Extras -->
+        <div class="grid-cell">Frozen Blueberries (1.5kg bag)</div>
+        <div class="grid-cell">$19.49</div>
+        <div class="grid-cell">300g (High Days only)</div>
+        <div class="grid-cell highlight">$3.89</div>
+
+        <div class="grid-cell">Frozen Bananas (600g bag)</div>
+        <div class="grid-cell">$6.50</div>
+        <div class="grid-cell">700g</div>
+        <div class="grid-cell highlight">$7.58</div>
+
+        <div class="grid-cell">PC Frozen Spinach (500g bag)</div>
+        <div class="grid-cell">$4.50</div>
+        <div class="grid-cell">595g</div>
+        <div class="grid-cell highlight">$5.35</div>
+
+        <div class="grid-cell">Beet Powder (454g bag)</div>
+        <div class="grid-cell">$24.98</div>
+        <div class="grid-cell">70g (7 tbsp)</div>
+        <div class="grid-cell highlight">$3.85</div>
+
+        <div class="grid-cell">No Name Black Beans (540ml can)</div>
+        <div class="grid-cell">$1.50</div>
+        <div class="grid-cell">150g (~0.3 can)</div>
+        <div class="grid-cell highlight">$0.45</div>
+
+        <div class="grid-cell">Ground Flaxseed</div>
+        <div class="grid-cell">~$5.00 / 300g</div>
+        <div class="grid-cell">280g</div>
+        <div class="grid-cell highlight">$4.66</div>
+        
+        <div class="grid-cell">Kiwis</div>
+        <div class="grid-cell">~$8.00 / 14</div>
+        <div class="grid-cell">14 Kiwis</div>
+        <div class="grid-cell highlight">$8.00</div>
+
+        <div class="grid-cell">Avocados</div>
+        <div class="grid-cell">~$6.00 / 4</div>
+        <div class="grid-cell">4 Avocados</div>
+        <div class="grid-cell highlight">$6.00</div>
+
+        <!-- Delivery Overheads -->
+        <div class="grid-cell" style="color:var(--text-muted); font-style:italic;">Instacart Sub Amortized ($111.87/yr)</div>
+        <div class="grid-cell">-</div>
+        <div class="grid-cell">1 Week</div>
+        <div class="grid-cell" style="color:var(--text-muted);">$2.15</div>
+
+        <div class="grid-cell" style="color:var(--text-muted); font-style:italic;">NoFrills Delivery + Tax</div>
+        <div class="grid-cell">$5.07</div>
+        <div class="grid-cell">1 Delivery</div>
+        <div class="grid-cell" style="color:var(--text-muted);">$5.07</div>
+
+        <div class="grid-cell" style="color:var(--text-muted); font-style:italic;">Costco Delivery + Tax</div>
+        <div class="grid-cell">$2.03</div>
+        <div class="grid-cell">1 Delivery</div>
+        <div class="grid-cell" style="color:var(--text-muted);">$2.03</div>
+
+        <!-- Total Row -->
+        <div class="grid-total-row">
+          <div>
+            <div style="font-family:'Outfit'; font-size:1.5rem; color:#fff; font-weight:700;">Exact Weekly Burn Rate</div>
+            <div style="color:var(--text-muted); font-size:0.9rem;">Includes ingredient amortization + exact delivery service fees.</div>
+          </div>
+          <div style="font-family:'Outfit'; font-size:2rem; color:var(--accent-primary); font-weight:800;">
+            $201.45
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FORFEIT TAB -->
+  <section id="Forfeit" class="section-content">
+    <div class="card" style="border-color: rgba(255,255,255,0.2);">
+      <div class="card-title">🔒 Forfeit Penalties ($50 per miss)</div>
+      
+      <div class="tbl-wrap">
+        <table>
+          <tbody>
+            <tr>
+              <td><strong>1. The High Day Rule</strong></td>
+              <td>Mon/Wed/Fri workouts MUST combine Sprinting & Gym on the same day. Do not split them up and ruin the recovery structure.</td>
+            </tr>
+            <tr>
+              <td><strong>2. The Low Day Rule</strong></td>
+              <td>Tue/Thu/Sat/Sun are complete rest. No heavy lifting. Let the muscles grow.</td>
+            </tr>
+            <tr>
+              <td><strong>3. The T-Apex Protocol</strong></td>
+              <td>Wednesday garage sessions must include Single-Leg Jump Squats and Explosive Chest Presses. No generic two-legged squats.</td>
+            </tr>
+            <tr>
+              <td><strong>4. The Kitchen Protocol</strong></td>
+              <td>Hit ~3,525 kcal on High Days. Hit ~2,187 kcal on Low Days. Never miss the Spinach & Milk fixes.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    function openTab(evt, tabName) {
+      let i, tabcontent, tablinks;
+      tabcontent = document.getElementsByClassName("section-content");
+      for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+        tabcontent[i].classList.remove("active");
+      }
+      tablinks = document.getElementsByClassName("tab-btn");
+      for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+      document.getElementById(tabName).style.display = "block";
+      document.getElementById(tabName).classList.add("active");
+      evt.currentTarget.className += " active";
+    }
+  </script>
+
+</body>
+</html>
